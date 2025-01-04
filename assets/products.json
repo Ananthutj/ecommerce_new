@@ -1,0 +1,58 @@
+{
+    "products": [
+        {
+            "id": "prod_1",
+            "name": "Sony WH-1000XM4",
+            "price": 349.99,
+            "images": [
+                "https://picsum.photos/id/1/800/800",
+                "https://picsum.photos/id/2/800/800",
+                "https://picsum.photos/id/3/800/800"
+            ],
+            "description": "Industry-leading noise canceling headphones with Dual Noise Sensor technology",
+            "isFavorite": false,
+            "category": "Electronics",
+            "specs": {
+                "color": "Black",
+                "batteryLife": "30 hours",
+                "connectivity": "Bluetooth 5.0"
+            }
+        },
+        {
+            "id": "prod_2",
+            "name": "MacBook Pro M2",
+            "price": 1299.99,
+            "images": [
+                "https://picsum.photos/id/4/800/800",
+                "https://picsum.photos/id/5/800/800",
+                "https://picsum.photos/id/6/800/800"
+            ],
+            "description": "Apple M2 chip with 8‑core CPU, 10‑core GPU, 16‑core Neural Engine",
+            "isFavorite": true,
+            "category": "Computers",
+            "specs": {
+                "processor": "M2",
+                "ram": "8GB",
+                "storage": "256GB"
+            }
+        },
+        {
+            "id": "prod_3",
+            "name": "Samsung Galaxy S23 Ultra",
+            "price": 1199.99,
+            "images": [
+                "https://picsum.photos/id/7/800/800",
+                "https://picsum.photos/id/8/800/800",
+                "https://picsum.photos/id/9/800/800"
+            ],
+            "description": "200MP camera, S Pen functionality, 6.8-inch Dynamic AMOLED display",
+            "isFavorite": false,
+            "category": "Smartphones",
+            "specs": {
+                "screen": "6.8 inch",
+                "camera": "200MP",
+                "battery": "5000mAh"
+            }
+        }
+    ]
+}
