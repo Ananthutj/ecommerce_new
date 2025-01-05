@@ -1,5 +1,5 @@
 
-import 'package:ecommerce_new/data/models/product.dart';
+import 'package:ecommerce_new/data/models/product.g.dart';
 import 'package:ecommerce_new/data/services/product_services.dart';
 
 class ProductRepository {

@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:ecommerce_new/data/models/product.dart';
+import 'package:ecommerce_new/data/models/product.g.dart';
 import 'package:ecommerce_new/data/repositories/product_repo.dart';
 import 'package:meta/meta.dart';
 
