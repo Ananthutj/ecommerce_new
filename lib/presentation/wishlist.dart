@@ -24,7 +24,7 @@ class _WishlistState extends State<Wishlist> {
         body: BlocBuilder<ProductWishlistBloc, ProductWishlistState>(
       builder: (context, state) {
         if (state is ProductWishListsFetched) {
-          List<Product> products = state.products;
+          List<Product> products = state.products.toSet().toList();
           print(products.toList());
           return ListView.builder(
             itemCount: products.length,

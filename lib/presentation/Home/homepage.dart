@@ -1,9 +1,9 @@
-import 'package:ecommerce_new/data/models/product.g.dart';
-import 'package:ecommerce_new/domain/bloc/Products/products_bloc.dart';
-import 'package:ecommerce_new/presentation/Home/product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:ecommerce_new/domain/bloc/Products/products_bloc.dart';
+import 'package:ecommerce_new/presentation/Home/product_page.dart';
+import 'package:ecommerce_new/data/models/product.g.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -25,7 +25,22 @@ class _HomepageState extends State<Homepage> {
 
   Future<void> _fetchProducts() async {
     await Future.delayed(const Duration(seconds: 2));
+    // ignore: use_build_context_synchronously
     context.read<ProductsBloc>().add(FetchProducts());
+  }
+
+  void _filterByCategory(String? category) {
+    setState(() {
+      selectedCategory = category;
+      if (category == 'All') {
+        filteredProducts = allProducts;
+      } else {
+        filteredProducts = allProducts
+            .where((product) =>
+                product.category.toLowerCase() == category!.toLowerCase())
+            .toList();
+      }
+    });
   }
 
   void _sortByDecrease() {
@@ -34,9 +49,9 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
-  void _sortByIncrease(){
+  void _sortByIncrease() {
     setState(() {
-      filteredProducts.sort((a,b)=>a.price.compareTo(b.price));
+      filteredProducts.sort((a, b) => a.price.compareTo(b.price));
     });
   }
 
@@ -45,34 +60,72 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 7,
-        title: Center(
-          child: TextFormField(
-            onChanged: (name) => setState(() {
-              filteredProducts = allProducts
-                  .where((product) =>
-                      product.name.toLowerCase().contains(name.toLowerCase()))
-                  .toList();
-            }),
-            decoration: const InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(width: 0.5),
-                borderRadius: BorderRadius.all(Radius.circular(15)),
+        title: Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                onChanged: (name) {
+                  setState(() {
+                    filteredProducts = allProducts
+                        .where((product) =>
+                            product.name
+                                .toLowerCase()
+                                .contains(name.toLowerCase()) &&
+                            (selectedCategory == 'All' ||
+                                product.category.toLowerCase() ==
+                                    selectedCategory!.toLowerCase()))
+                        .toList();
+                  });
+                },
+                decoration: const InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 0.5),
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  hintText: 'Search products...',
+                  border: InputBorder.none,
+                  prefixIcon: Icon(Icons.search),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
               ),
-              contentPadding: EdgeInsets.only(top: 12),
-              hintText: 'Search products...',
-              border: InputBorder.none,
-              prefixIcon: Icon(Icons.search),
-              filled: true,
-              fillColor: Colors.white,
             ),
-          ),
+            const Gap(10),
+            DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: selectedCategory,
+                icon: const Icon(Icons.filter_list),
+                style: const TextStyle(color: Colors.black, fontSize: 14),
+                items: [
+                  'All',
+                  'Electronics',
+                  'Clothing',
+                  'Computers',
+                  'Sports',
+                  'Smartphones'
+                ]
+                    .map((category) => DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  _filterByCategory(value);
+                },
+              ),
+            ),
+          ],
         ),
         actions: [
           GestureDetector(
             onTap: _sortByDecrease,
-            child: const Card(
-              child: Padding(
-                padding: EdgeInsets.all(5.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: Row(
                   children: [
                     Text('Sort'),
@@ -85,9 +138,12 @@ class _HomepageState extends State<Homepage> {
           ),
           GestureDetector(
             onTap: _sortByIncrease,
-            child: const Card(
-              child: Padding(
-                padding: EdgeInsets.all(5.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: Row(
                   children: [
                     Text('Sort'),
@@ -131,7 +187,13 @@ class _HomepageState extends State<Homepage> {
               );
             } else if (state is ProductsFetched) {
               allProducts = state.products;
-              filteredProducts = state.products;
+              filteredProducts = selectedCategory == 'All'
+                  ? state.products
+                  : state.products
+                      .where((product) =>
+                          product.category.toLowerCase() ==
+                          selectedCategory!.toLowerCase())
+                      .toList();
 
               return filteredProducts.isEmpty
                   ? const Center(child: Text('No products available.'))
@@ -148,8 +210,14 @@ class _HomepageState extends State<Homepage> {
                       itemBuilder: (context, index) {
                         final product = filteredProducts[index];
                         return GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetailsPage(product: product)));
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetailsPage(product: product),
+                              ),
+                            );
                           },
                           child: Card(
                             shape: RoundedRectangleBorder(
