@@ -4,6 +4,11 @@ import 'package:ecommerce_new/data/models/product.g.dart';
 class WishlistUtils {
   static const String wishlistBoxName = 'wishlist';
 
+  Future<void> cacheProduct(Product product) async {
+    var box = await Hive.openBox<Product>('products');
+    await box.put(product.id, product);
+  }
+
   static Future<bool> isInWishlist(Product product) async {
     var box = await Hive.openBox<Product>(wishlistBoxName);
     return box.values.any((element) => element.id == product.id);
@@ -16,7 +21,9 @@ class WishlistUtils {
 
   static Future<void> removeFromWishlist(Product product) async {
     var box = await Hive.openBox<Product>(wishlistBoxName);
-    final keyToRemove = box.keys.firstWhere((key) => box.get(key)!.id == product.id, orElse: () => null);
+    final keyToRemove = box.keys.firstWhere(
+        (key) => box.get(key)!.id == product.id,
+        orElse: () => null);
     if (keyToRemove != null) {
       await box.delete(keyToRemove);
     }

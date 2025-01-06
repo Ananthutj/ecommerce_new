@@ -6,6 +6,8 @@ import 'package:gap/gap.dart';
 import 'package:ecommerce_new/domain/bloc/Products/products_bloc.dart';
 import 'package:ecommerce_new/presentation/Home/product_page.dart';
 import 'package:ecommerce_new/data/models/product.g.dart';
+import 'package:hive/hive.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -27,9 +29,16 @@ class _HomepageState extends State<Homepage> {
   }
 
   Future<void> _fetchProducts() async {
-    await Future.delayed(const Duration(seconds: 2));
-    // ignore: use_build_context_synchronously
-    context.read<ProductsBloc>().add(FetchProducts());
+    var cachedBox = await Hive.openBox<Product>('products');
+    if (cachedBox.isNotEmpty) {
+      allProducts = cachedBox.values.toList();
+      setState(() {
+        filteredProducts = allProducts;
+      });
+    } else {
+      await Future.delayed(const Duration(seconds: 2));
+      context.read<ProductsBloc>().add(FetchProducts());
+    }
   }
 
   void _filterByCategory(String? category) {
@@ -239,10 +248,14 @@ class _HomepageState extends State<Homepage> {
                                       borderRadius: const BorderRadius.vertical(
                                         top: Radius.circular(12),
                                       ),
-                                      child: Image.network(
-                                        product.images[0],
-                                        fit: BoxFit.cover,
-                                      ),
+                                      child:  CachedNetworkImage(
+            imageUrl: product.images[0],
+            fit: BoxFit.cover,
+            placeholder: (context, url) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
                                     ),
                                   ),
                                   Positioned(
