@@ -60,5 +60,5 @@ The state management is achieved using the BLoC (Business Logic Component) patte
 
 ### Installation
 1. Clone the repository:
-   git clone https://github.com/your-username/ecommerce-product-catalog.git
+   git clone https://github.com/Ananthutj/ecommerce_new.git
    cd ecommerce-product-catalog
