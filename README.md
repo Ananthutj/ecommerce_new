@@ -72,6 +72,5 @@ The state management is achieved using the BLoC (Business Logic Component) patte
 - Dart SDK installed
 
 ### Installation
-1. Clone the repository:
+Clone the repository:
    git clone https://github.com/Ananthutj/ecommerce_new.git
-   cd ecommerce-product-catalog
