@@ -43,13 +43,8 @@ class ProductWishlistBloc
 
     on<ToggleWishlistProduct>((event, emit) async {
       try {
-        final isFavorite =
-            wishlistBox.values.any((item) => item.id == event.product.id);
-        if (isFavorite) {
-          add(RemoveProductFromWishList(product: event.product));
-        } else {
-          add(AddProductToWishList(product: event.product));
-        }
+        await WishlistUtils.toggleWishlist(event.product);
+        add(FetchWishListProducts(isFavorite: true));
       } catch (e) {
         emit(ProductWishlistError(message: e.toString()));
       }
