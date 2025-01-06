@@ -1,3 +1,5 @@
+import 'package:ecommerce_new/domain/bloc/product_wishlist/product_wishlist_bloc.dart';
+import 'package:ecommerce_new/utils/add_to_wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -16,6 +18,7 @@ class _HomepageState extends State<Homepage> {
   List<Product> allProducts = [];
   List<Product> filteredProducts = [];
   String? selectedCategory = 'All';
+  late Future<bool> isInWishlist;
 
   @override
   void initState() {
@@ -32,14 +35,11 @@ class _HomepageState extends State<Homepage> {
   void _filterByCategory(String? category) {
     setState(() {
       selectedCategory = category;
-      if (category == 'All') {
-        filteredProducts = allProducts;
-      } else {
-        filteredProducts = allProducts
-            .where((product) =>
-                product.category.toLowerCase() == category!.toLowerCase())
-            .toList();
-      }
+      filteredProducts = allProducts
+          .where((product) =>
+              category == 'All' ||
+              product.category.toLowerCase() == category!.toLowerCase())
+          .toList();
     });
   }
 
@@ -187,13 +187,15 @@ class _HomepageState extends State<Homepage> {
               );
             } else if (state is ProductsFetched) {
               allProducts = state.products;
-              filteredProducts = selectedCategory == 'All'
-                  ? state.products
-                  : state.products
-                      .where((product) =>
-                          product.category.toLowerCase() ==
-                          selectedCategory!.toLowerCase())
-                      .toList();
+              if (filteredProducts.isEmpty || selectedCategory == null) {
+                filteredProducts = selectedCategory == 'All'
+                    ? state.products
+                    : state.products
+                        .where((product) =>
+                            product.category.toLowerCase() ==
+                            selectedCategory!.toLowerCase())
+                        .toList();
+              }
 
               return filteredProducts.isEmpty
                   ? const Center(child: Text('No products available.'))
@@ -209,6 +211,7 @@ class _HomepageState extends State<Homepage> {
                       itemCount: filteredProducts.length,
                       itemBuilder: (context, index) {
                         final product = filteredProducts[index];
+                        isInWishlist = WishlistUtils.isInWishlist(product);
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -227,20 +230,62 @@ class _HomepageState extends State<Homepage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 4.5,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(12),
-                                    ),
-                                    child: Image.network(
-                                      product.images[0],
-                                      fit: BoxFit.cover,
+                                Stack(children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height /
+                                        4.5,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(12),
+                                      ),
+                                      child: Image.network(
+                                        product.images[0],
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: BlocBuilder<ProductWishlistBloc,
+                                        ProductWishlistState>(
+                                      builder: (context, state) {
+                                        bool isInWishlist = false;
+
+                                        if (state is ProductWishListsFetched) {
+                                          isInWishlist = state.products.any(
+                                              (item) => item.id == product.id);
+                                        }
+
+                                        return IconButton(
+                                          icon: Icon(
+                                            isInWishlist
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: isInWishlist
+                                                ? Colors.red
+                                                : Colors.grey,
+                                          ),
+                                          onPressed: () {
+                                            final wishlistBloc = context
+                                                .read<ProductWishlistBloc>();
+
+                                            if (isInWishlist) {
+                                              wishlistBloc.add(
+                                                  RemoveProductFromWishList(
+                                                      product: product));
+                                            } else {
+                                              wishlistBloc.add(
+                                                  AddProductToWishList(
+                                                      product: product));
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ]),
                                 Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),

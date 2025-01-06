@@ -24,6 +24,7 @@ class _WishlistState extends State<Wishlist> {
 
   void removeFromWishlist(Product product) async {
     await WishlistUtils.removeFromWishlist(product);
+    // ignore: use_build_context_synchronously
     context
         .read<ProductWishlistBloc>()
         .add(FetchWishListProducts(isFavorite: true));
