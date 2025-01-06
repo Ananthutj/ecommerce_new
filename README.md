@@ -50,6 +50,19 @@ The state management is achieved using the BLoC (Business Logic Component) patte
 - Repositories handle data persistence and API calls.
 
 ## Screenshots
+<img src="https://github.com/user-attachments/assets/79556244-00ec-4a98-b2b3-d98e534bef09" width="300" />
+
+<img src="https://github.com/user-attachments/assets/c24511af-2355-4153-bb4d-f79516a464d5" width="300" />
+
+<img src="https://github.com/user-attachments/assets/24e63f5f-d3d8-4bdf-8204-262e42c286a4" width="300" />
+
+<img src="https://github.com/user-attachments/assets/03a6027b-068b-450f-9dcf-17c290a30d95" width="300" />
+
+<img src="https://github.com/user-attachments/assets/11a927dc-c3a0-49c9-8547-adc2808cdb14" width="300" />
+
+<img src="https://github.com/user-attachments/assets/b1e7fcc9-b473-4c99-9fe7-eb8937d9cfa5" width="300" />
+
+<img src="https://github.com/user-attachments/assets/1991e7e9-7f13-4b9d-9a0d-bbf8608c704c" width="300" />
 
 
 ## Getting Started
